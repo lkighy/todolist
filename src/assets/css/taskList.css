@@ -1,0 +1,21 @@
+.taskList {
+    padding: 32px 12px 12px;
+}
+
+.taskList .search {
+    margin: 12px 0;
+}
+
+.taskList {
+    color: #4f5257;
+}
+
+.taskList .taskCard {
+    text-align: left;
+    padding: 8px 8px 0;
+    border-radius: 8px;
+    width: 100%;
+    background: #fff;
+    margin: 10px 0;
+}
+
