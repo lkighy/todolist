@@ -4,12 +4,9 @@
 
 运行
 
+> yarn install
+
 > yarn start
-
-打包
-
-> yarn build
-
 
 ## todo
 
