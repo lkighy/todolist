@@ -9,11 +9,9 @@ import { DeleteOutlined, EditOutlined, CheckOutlined, CloseOutlined } from '@ant
 export default class TaskList extends React.Component {
     constructor(props) {
         super(props);
-        let token = '' + this.props.token;
         this.state = {
             keyword: '',
-            searchList: [],
-            token: token,
+            searchList: []
         };
         this.handleSearchInput = this.handleSearchInput.bind(this);
     }
@@ -29,31 +27,16 @@ export default class TaskList extends React.Component {
         })
     }
 
-    componentDidUpdate(prevProps) {
-        if (prevProps.token !== this.state.token) {
-            let keyword = this.state.keyword;
-            let searchList = this.props.tasklist.filter(item => {
-                return item.title.indexOf(keyword) !== -1
-            })
-            this.setState({
-                keyword,
-                searchList,
-                token: prevProps.token,
-            })
-        }
-    }
-
-
     render() {
         const tasklist = this.props.tasklist.map((item, index) => {
-            return <TaskCard
+            return (<TaskCard
                 index={index}
                 remove={this.props.remove}
                 select={this.props.select}
                 update={this.props.update}
                 id={this.props.id}
                 task={item}
-                key={item.id} />
+                key={item.id} />)
         })
         let empty;
         if (this.props.tasklist.length == 0) {

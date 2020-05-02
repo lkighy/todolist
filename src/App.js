@@ -9,8 +9,8 @@ import TaskList from './Components/TaskList';
 import TodoList from './Components/TodoList';
 
 import { TASK_KEY, setStore } from './utils/storage';
-import {DateFormat} from './utils/tools';
-import {uuid} from './utils/uuid';
+import { DateFormat } from './utils/tools';
+import { uuid } from './utils/uuid';
 
 import { state } from './state';
 
@@ -26,8 +26,7 @@ class App extends Component {
       time: '',
       id: '',
       index: -1,
-      todolist: [],
-      token: uuid(),
+      todolist: []
     };
 
     this.handleAddTask = this.handleAddTask.bind(this)
@@ -43,8 +42,7 @@ class App extends Component {
   handleAddTask(task) {
     let tasklist = [...this.state.tasklist, task];
     this.setState({
-      tasklist,
-      token: uuid(),
+      tasklist
     })
     setStore(TASK_KEY, tasklist)
   }
@@ -60,8 +58,7 @@ class App extends Component {
         time: '',
         id: '',
         index: -1,
-        todolist: [],
-        token: uuid(),
+        todolist: []
       }
     }
     this.setState({
@@ -72,11 +69,10 @@ class App extends Component {
   // 改
   handleUpdateTask(id, task) {
     let tasklist = this.state.tasklist;
-    let index = tasklist.findIndex(item => {return item.id == id})
+    let index = tasklist.findIndex(item => { return item.id == id })
     tasklist[index] = task
     this.setState({
-      tasklist,
-      token: uuid(),
+      tasklist
     })
     setStore(TASK_KEY, tasklist)
   }
@@ -89,8 +85,7 @@ class App extends Component {
       time: DateFormat(new Date(task.startTime), 'yyyy/MM/dd'),
       id: task.id,
       index: index,
-      todolist: task.todolist,
-      token: uuid(),
+      todolist: task.todolist
     })
   }
   // 待办清单增删改查
@@ -106,8 +101,7 @@ class App extends Component {
     tasklist[this.state.index].progress = progress;
     this.setState({
       tasklist,
-      todolist,
-      token: uuid(),
+      todolist
     })
     setStore(TASK_KEY, tasklist)
   }
@@ -123,8 +117,7 @@ class App extends Component {
     tasklist[this.state.index].progress = progress;
     this.setState({
       tasklist,
-      todolist,
-      token: uuid(),
+      todolist
     })
     setStore(TASK_KEY, tasklist)
   }
@@ -150,7 +143,7 @@ class App extends Component {
   render() {
     let title;
     {
-      if (this.state.title === "") {
+      if (this.state.title === '') {
         title = (<Header className="header">
           <div className="title">暂未选中任务</div>
         </Header>)
@@ -171,7 +164,8 @@ class App extends Component {
               token={this.state.token}
               select={this.handleSelectTask}
               update={this.handleUpdateTask}
-              tasklist={this.state.tasklist} />
+              tasklist={this.state.tasklist}
+            />
             <AddTask add={this.handleAddTask} />
           </Sider>
           <Layout>
@@ -182,7 +176,8 @@ class App extends Component {
                 todolist={this.state.todolist}
                 add={this.handleAddTodo}
                 remove={this.handleRemoveTodo}
-                update={this.handleUpdateTodo} />
+                update={this.handleUpdateTodo}
+              />
             </Content>
           </Layout>
         </Layout>
