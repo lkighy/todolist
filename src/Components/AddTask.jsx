@@ -117,8 +117,7 @@ function AddForm(props) {
             </Form.Item>
 
             {props.todolist.map((todo, index) =>
-
-                <Form.Item key={todo.id} label={'代办清单' + index} required rules={[{ required: true, message: '任务名称不能为空!' }]}>
+                <Form.Item key={todo.id} label={'代办清单' + index} required rules={[{ required: true}]}>
                     <Input style={{ width: '180px' }} value={todo.title} data-index={index} onInput={props.inputTodo}></Input>
                     <span className="removeBtn" data-index={index} onClick={props.todoRemove}>
                         <MinusCircleOutlined />

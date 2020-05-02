@@ -3,7 +3,7 @@ import React from 'react';
 import { Checkbox, Empty, Popconfirm, Button, Input, message } from 'antd';
 import '../assets/css/todoList.css';
 
-import { DeleteOutlined, PlusOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined, CheckOutlined, CloseOutlined, EditOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { uuid } from '../utils/uuid';
 
 export default class TodoList extends React.Component {
@@ -59,7 +59,7 @@ export default class TodoList extends React.Component {
                 key={item.id}
                 todo={item}
                 index={index}
-                update={this.handleUpdate}
+                update={this.props.update}
                 remove={this.props.remove} />
         )
         let addButton;
@@ -99,29 +99,100 @@ export default class TodoList extends React.Component {
     }
 }
 
-function TodoItem(props) {
-    return (
-        <div className="todoItem">
-            <Checkbox
-                checked={props.todo.status}
-                data-index={props.index}
-                onChange={props.update}
-                className={'todoCheck ' + (props.todo.status ? 'done' : '')}>
-                {props.todo.title}
-            </Checkbox>
-            <div className="deleteBtn">
-                <Popconfirm
-                    title="确定要删除这个代办项？"
-                    okText="是"
-                    cancelText="否"
-                    data-index={props.index}
-                    onConfirm={props.remove}
-                >
-                    <DeleteOutlined />
-                </Popconfirm>
-            </div>
-        </div>
-    )
+class TodoItem extends React.Component {
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            isEdit: false,
+            title: props.todo.title,
+        }
+        this.handleEditInpput = this.handleEditInpput.bind(this)
+        this.handleUpdate = this.handleUpdate.bind(this)
+    }
+
+    handleEditInpput(e) {
+        this.setState({
+            title: e.currentTarget.value
+        })
+    }
+    handleUpdate(e) {
+        console.log("e: ", typeof e.target)
+        let todo = this.props.todo;
+        if (typeof e.target.checked === 'boolean') {
+            this.props.update({
+                ...todo,
+                status: e.target.checked
+            })
+        } else {
+            if (this.state.title === '') {
+                message.warning('待办清单名称不能为空!')
+                return
+            }
+            this.props.update({
+                ...todo,
+                title: this.state.title,
+            })
+            this.setState({
+                isEdit: false,
+            })
+        }
+        // let todo = this.props.todo;
+        // this.props.update({
+        //     ...todo,
+        //     status: !todo.status
+        // })
+    }
+    render() {
+        if (this.state.isEdit) {
+            return (
+                <div className="todoItem">
+                    <Input
+                        onInput={this.handleEditInpput}
+                        value={this.state.title}
+                        className="todoInput"
+                        placeholder="请输入待办清单名称"
+                    ></Input>
+                    <div className="deleteBtn" onClick={this.handleUpdate}>
+                        <CheckOutlined />
+                    </div>
+                    <div className="editBtn" onClick={() => this.setState({ isEdit: false })}>
+                        <MinusCircleOutlined />
+                    </div>
+
+                </div>
+            )
+        } else {
+            return (
+                <div className="todoItem">
+                    <Checkbox
+                        checked={this.props.todo.status}
+                        data-index={this.props.index}
+                        onChange={this.handleUpdate}
+                        className={'todoCheck ' + (this.props.todo.status ? 'done' : '')}>
+                        {this.props.todo.title}
+                    </Checkbox>
+
+                    <div className="editBtn" onClick={() => this.setState({ isEdit: true })}>
+                        <EditOutlined />
+                    </div>
+
+                    <div className="deleteBtn">
+                        <Popconfirm
+                            title="确定要删除这个代办项？"
+                            okText="是"
+                            cancelText="否"
+                            data-index={this.props.index}
+                            onConfirm={this.props.remove}
+                        >
+                            <DeleteOutlined />
+                        </Popconfirm>
+                    </div>
+                </div>
+            )
+        }
+
+    }
 }
 
 function TodoAddItem(props) {

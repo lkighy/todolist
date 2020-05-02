@@ -33,14 +33,17 @@
 
 .taskCard .taskContent {
     display: flex;
-    line-height: 48px;
 }
 
 .taskCard .taskName {
     flex: 1;
     padding-left: 10px;
+    line-height: 48px;
 }
 
+.taskCard .editTask {
+    font-size: 20px;
+}
 
 .taskCard .deleteBtn {
     width: 48px;
@@ -51,6 +54,28 @@
     line-height: 48px;
     color: #FF6A52;
     font-size: 18px;
+}
+
+.placeholder {
+    width: 100%;
+    height: 32px;
+    background: #fff;
+}
+
+.taskInput {
+    padding: 10px;
+    display: flex;
+}
+
+.addBtn {
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    border-radius: 4px;
+    background: #ebf1fb;
+    color: #FF6A52;
+    margin-left: 12px;
 }
 
 .taskCard.on {

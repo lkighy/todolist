@@ -9,8 +9,8 @@ import TaskList from './Components/TaskList';
 import TodoList from './Components/TodoList';
 
 import { TASK_KEY, setStore } from './utils/storage';
-
-
+import {DateFormat} from './utils/tools';
+import {uuid} from './utils/uuid';
 
 import { state } from './state';
 
@@ -27,6 +27,7 @@ class App extends Component {
       id: '',
       index: -1,
       todolist: [],
+      token: uuid(),
     };
 
     this.handleAddTask = this.handleAddTask.bind(this)
@@ -43,16 +44,16 @@ class App extends Component {
     let tasklist = [...this.state.tasklist, task];
     this.setState({
       tasklist,
+      token: uuid(),
     })
     setStore(TASK_KEY, tasklist)
   }
   // 删
   handleRemoveTask(id) { // 如果要保证删除的是正确序号的任务列表，则可再传入一个ID来进行判定
     let state = this.state;
-    let index = this.state.tasklist.findIndex(item => {return item.id == id})
+    let index = this.state.tasklist.findIndex(item => { return item.id == id })
     let [task] = state.tasklist.splice(index, 1)
     if (task.id == state.id) {
-      console.log("测试")
       state = {
         ...state,
         title: '',
@@ -60,6 +61,7 @@ class App extends Component {
         id: '',
         index: -1,
         todolist: [],
+        token: uuid(),
       }
     }
     this.setState({
@@ -68,40 +70,44 @@ class App extends Component {
     setStore(TASK_KEY, state.tasklist)
   }
   // 改
-  handleUpdateTask(index, task) {
+  handleUpdateTask(id, task) {
     let tasklist = this.state.tasklist;
+    let index = tasklist.findIndex(item => {return item.id == id})
     tasklist[index] = task
     this.setState({
-      tasklist
+      tasklist,
+      token: uuid(),
     })
     setStore(TASK_KEY, tasklist)
   }
   // 点击
   handleSelectTask(id) {
-    let index = this.state.tasklist.findIndex(item => {return item.id === id})
+    let index = this.state.tasklist.findIndex(item => { return item.id === id })
     let task = this.state.tasklist[index]
     this.setState({
       title: task.title,
-      time: task.time,
+      time: DateFormat(new Date(task.startTime), 'yyyy/MM/dd'),
       id: task.id,
       index: index,
       todolist: task.todolist,
+      token: uuid(),
     })
   }
   // 待办清单增删改查
   handleAddTodo(newTodo) { // 添加
-    if(this.state.index === -1) {
+    if (this.state.index === -1) {
       return
     }
     let tasklist = this.state.tasklist;
     let todolist = tasklist[this.state.index].todolist;
     todolist.push(newTodo);
     tasklist[this.state.index].todolist = todolist;
-    let progress = todolist.filter(item=>{return item.status}).length;
+    let progress = todolist.filter(item => { return item.status }).length;
     tasklist[this.state.index].progress = progress;
     this.setState({
       tasklist,
-      todolist
+      todolist,
+      token: uuid(),
     })
     setStore(TASK_KEY, tasklist)
   }
@@ -109,15 +115,16 @@ class App extends Component {
   handleRemoveTodo(id) {
     let tasklist = this.state.tasklist;
     let todolist = tasklist[this.state.index].todolist;
-    let index = todolist.findIndex(item => {return item.id === id})
-    
+    let index = todolist.findIndex(item => { return item.id === id })
+
     todolist.splice(index, 1)
     tasklist[this.state.index].todolist = todolist
-    let progress = todolist.filter(item=>{return item.status}).length;
+    let progress = todolist.filter(item => { return item.status }).length;
     tasklist[this.state.index].progress = progress;
     this.setState({
       tasklist,
-      todolist
+      todolist,
+      token: uuid(),
     })
     setStore(TASK_KEY, tasklist)
   }
@@ -126,21 +133,19 @@ class App extends Component {
     // console.log("todo: ", todo)
     let tasklist = this.state.tasklist;
     let todolist = tasklist[this.state.index].todolist;
-    let index = todolist.findIndex(item => {return item.id === todo.id})
+    let index = todolist.findIndex(item => { return item.id === todo.id })
 
     todolist[index] = todo;
-    let progress = todolist.filter(item=>{return item.status}).length;
+    let progress = todolist.filter(item => { return item.status }).length;
     tasklist[this.state.index].progress = progress;
     tasklist[this.state.index].todolist = todolist;
     this.setState({
       tasklist,
-      todolist
+      todolist,
+      token: uuid(),
     })
     setStore(TASK_KEY, tasklist)
   }
-  // handleSelectTodo(index) {
-
-  // }
 
   render() {
     let title;
@@ -160,25 +165,27 @@ class App extends Component {
       <div className="App">
         <Layout>
           <Sider className="sider" width="300px" theme="light" breakpoint="lg" collapsedWidth="0">
-            <TaskList 
-            remove={this.handleRemoveTask} 
-            id={this.state.id}
-            select={this.handleSelectTask}
-            tasklist={this.state.tasklist} />
+            <TaskList
+              remove={this.handleRemoveTask}
+              id={this.state.id}
+              token={this.state.token}
+              select={this.handleSelectTask}
+              update={this.handleUpdateTask}
+              tasklist={this.state.tasklist} />
             <AddTask add={this.handleAddTask} />
           </Sider>
           <Layout>
             {title}
             <Content className="content">
-              <TodoList 
-              index={this.state.index} 
-              todolist={this.state.todolist} 
-              add={this.handleAddTodo} 
-              remove={this.handleRemoveTodo}
-              update={this.handleUpdateTodo}/>
+              <TodoList
+                index={this.state.index}
+                todolist={this.state.todolist}
+                add={this.handleAddTodo}
+                remove={this.handleRemoveTodo}
+                update={this.handleUpdateTodo} />
             </Content>
           </Layout>
-        </Layout> 
+        </Layout>
       </div>
     );
   }

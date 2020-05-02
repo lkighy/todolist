@@ -32,9 +32,24 @@
     line-height: 28px;
 }
 
+.todoItem .todoInput {
+    flex: 1;
+}
+
 .todoItem .todoCheck.done {
     text-decoration: line-through;
     color: #8b8e9f;
+}
+
+.editBtn {
+    width: 32px;
+    height: 32px;
+    text-align: center;
+    line-height: 32px;
+    border-radius: 4px;
+    background: #ebf1fb;
+    color: #a0b1d0;
+    margin-left: 12px;
 }
 
 .deleteBtn {
