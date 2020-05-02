@@ -16,9 +16,6 @@ export default class AddTask extends React.Component {
 
         this.state = {
             title: '',
-            id: uuid(),
-            startTime: new Date().getTime(),
-            progress: 0,
             todolist: [],
         }
 
@@ -26,6 +23,7 @@ export default class AddTask extends React.Component {
         this.handleTodoAdd = this.handleTodoAdd.bind(this)
         this.handleTodoRemove = this.handleTodoRemove.bind(this)
         this.handleInputTodo = this.handleInputTodo.bind(this)
+        this.handleAddTask = this.handleAddTask.bind(this)
     }
 
     handleInputTask(e) {
@@ -42,7 +40,6 @@ export default class AddTask extends React.Component {
         this.setState({
             todolist
         })
-        console.log("查看执行2")
     }
 
     handleTodoAdd() {
@@ -64,6 +61,19 @@ export default class AddTask extends React.Component {
         })
     }
 
+    handleAddTask(e) {
+        this.props.add({
+            ...this.state,
+            startTime: new Date().getTime(),
+            id: uuid(),
+            progress: 0,
+        })
+        this.setState({
+            title: '',
+            todolist: [],
+        })
+    }
+
     render() {
         return (
             <div className="AddTask">
@@ -78,6 +88,7 @@ export default class AddTask extends React.Component {
                     />}
                     okText="确定"
                     cancelText="取消"
+                    onConfirm={this.handleAddTask}
                     icon={null}>
                     <Button className="btn" type="primary" size="large" icon={<PlusOutlined />} />
                 </Popconfirm>,
@@ -86,71 +97,31 @@ export default class AddTask extends React.Component {
     }
 }
 
-class AddForm extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            title: '',
-            id: uuid(),
-            startTime: new Date().getTime(),
-            progress: 0,
-            todolist: [],
-        }
+function AddForm(props) {
+    return (
+        <Form labelCol={{ span: 8 }} labelAlign="right" name="addTask" style={{ width: '320px' }}>
+            <Form.Item label="任务名称">
+                <Input style={{ width: '180px' }} value={props.title} onInput={props.inputTask}></Input>
+            </Form.Item>
 
-        this.handleInputTask = this.handleInputTask.bind(this)
-        this.handleTodoAdd = this.handleTodoAdd.bind(this)
-        this.handleTodoRemove = this.handleTodoRemove.bind(this)
-    }
+            {props.todolist.map((todo, index) =>
 
-    handleInputTask(e) {
-        this.setState({
-            title: e.currentTarget.value,
-        })
-    }
-    handleTodoAdd() {
-        this.setState({
-            todolist: [...this.state.todolist, {
-                title: '',
-                startTime: new Date().getTime(),
-                id: uuid(),
-                status: false,
-            }],
-            progress: this.state.progress + 1
-        })
-    }
-    handleTodoRemove(e) {
-        let todolist = this.state.todolist;
-        todolist.splice(e.currentTarget.dataset.index, 1)
-        this.setState({
-            todolist
-        })
-    }
-
-    render() {
-        return (
-            <Form labelCol={{ span: 8 }} labelAlign="right" name="addTask" style={{ width: '320px' }}>
-                <Form.Item label="任务名称">
-                    <Input style={{ width: '180px' }} value={this.props.title} onInput={this.props.inputTask}></Input>
+                <Form.Item key={todo.id} label={'代办清单' + index}>
+                    <Input style={{ width: '180px' }} value={todo.title} data-index={index} onInput={props.inputTodo}></Input>
+                    <span className="removeBtn" data-index={index} onClick={props.todoRemove}>
+                        <MinusCircleOutlined />
+                    </span>
                 </Form.Item>
-
-                {this.props.todolist.map((todo, index) =>
-
-                    <Form.Item key={todo.id} label={'代办清单' + index}>
-                        <Input style={{ width: '180px' }} value={todo.title} data-index={index} onInput={this.props.inputTodo}></Input>
-                        <span className="removeBtn" data-index={index} onClick={this.props.todoRemove}>
-                            <MinusCircleOutlined />
-                        </span>
-                    </Form.Item>
-                )}
-                <Button
-                    type="dashed"
-                    onClick={this.props.addTodo}
-                    style={{ width: '100%' }}
-                >
-                    <PlusOutlined /> 添加代办清单
+            )}
+            <Button
+                type="dashed"
+                onClick={props.addTodo}
+                style={{ width: '100%' }}
+            >
+                <PlusOutlined />
+                    添加代办清单
                 </Button>
-            </Form>
-        )
+        </Form>
+    )
 
-    }
 }

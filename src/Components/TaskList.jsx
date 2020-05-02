@@ -11,6 +11,7 @@ export default class TaskList extends React.Component {
         super(props);
         this.state = {
             keyword: '',
+            searchList: [],
         };
         this.handleSearchInput = this.handleSearchInput.bind(this);
     }
@@ -21,13 +22,15 @@ export default class TaskList extends React.Component {
         })
     }
 
-    // this.props.add()
-    // this.props.update()
-    // this.props.select()
-
     render() {
-        const tasklist = this.props.tasklist.map((item, index)=>
-            <TaskCard onClick={this.props.select(index)} remove={this.props.remove} id={this.props.id} task={item} key={item.id} />
+        const tasklist = this.props.tasklist.map((item, index) =>
+            <TaskCard
+                index={index}
+                remove={this.props.remove}
+                select={this.props.select}
+                id={this.props.id}
+                task={item}
+                key={item.id} />
         )
         let empty;
         if (this.props.tasklist.length == 0) {
@@ -47,28 +50,46 @@ export default class TaskList extends React.Component {
     }
 }
 
-function TaskCard(props) {
-    return (
-        <div className="taskCard">
-            <div className={"taskContent " + (props.task.id == props.id ? 'on' : '')}>
-                <div className="deleteBtn">
+class TaskCard extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.handleRemove = this.handleRemove.bind(this)
+        this.handleSelect = this.handleSelect.bind(this)
+    }
+
+    handleRemove(e) {
+        this.props.remove(this.props.task.id)
+    }
+
+    handleSelect(e) {
+        this.props.select(this.props.task.id)
+    }
+
+    render() {
+        return (
+            <div className="taskCard">
+                <div className={"taskContent " + (this.props.task.id == this.props.id ? 'on' : '')}>
                     <Popconfirm
                         title="确定要删除这个任务？"
                         okText="是"
                         cancelText="否"
-                        onConfirm={props.remove(this.props.index)}
+                        onConfirm={this.props.remove}
                     >
-                        <DeleteOutlined />
+                        <div className="deleteBtn">
+                            <DeleteOutlined />
+                        </div>
                     </Popconfirm>
+                    <div className="taskName"
+                        onClick={this.handleSelect}>
+                        {this.props.task.title}
+                    </div>
+                    <div>
+                        <RightOutlined />
+                    </div>
                 </div>
-                <div className="taskName">
-                    {props.task.title}
-                </div>
-                <div>
-                    <RightOutlined />
-                </div>
+                <Progress percent={parseInt(this.props.task.progress * 100 / this.props.task.todolist.length)}></Progress>
             </div>
-            <Progress percent={props.task.progress * 100 / props.task.todolist.length}></Progress>
-        </div>
-    )
+        )
+    }
 }

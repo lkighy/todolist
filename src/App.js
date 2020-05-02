@@ -47,13 +47,25 @@ class App extends Component {
     setStore(TASK_KEY, tasklist)
   }
   // 删
-  handleRemoveTask(index) { // 如果要保证删除的是正确序号的任务列表，则可再传入一个ID来进行判定
-    let tasklist = this.state.tasklist;
-    tasklist.splice(index, 1)
+  handleRemoveTask(id) { // 如果要保证删除的是正确序号的任务列表，则可再传入一个ID来进行判定
+    let state = this.state;
+    let index = this.state.tasklist.findIndex(item => {return item.id == id})
+    let [task] = state.tasklist.splice(index, 1)
+    if (task.id == state.id) {
+      console.log("测试")
+      state = {
+        ...state,
+        title: '',
+        time: '',
+        id: '',
+        index: -1,
+        todolist: [],
+      }
+    }
     this.setState({
-      tasklist
+      ...state
     })
-    setStore(TASK_KEY, tasklist)
+    setStore(TASK_KEY, state.tasklist)
   }
   // 改
   handleUpdateTask(index, task) {
@@ -65,7 +77,8 @@ class App extends Component {
     setStore(TASK_KEY, tasklist)
   }
   // 点击
-  handleSelectTask(index) {
+  handleSelectTask(id) {
+    let index = this.state.tasklist.findIndex(item => {return item.id === id})
     let task = this.state.tasklist[index]
     this.setState({
       title: task.title,
@@ -76,29 +89,52 @@ class App extends Component {
     })
   }
   // 待办清单增删改查
-  handleAddTodo(newTodolist) { // 添加
+  handleAddTodo(newTodo) { // 添加
+    if(this.state.index === -1) {
+      return
+    }
     let tasklist = this.state.tasklist;
-    tasklist[this.state.index].todolist = newTodolist;
+    let todolist = tasklist[this.state.index].todolist;
+    todolist.push(newTodo);
+    tasklist[this.state.index].todolist = todolist;
+    let progress = todolist.filter(item=>{return item.status}).length;
+    tasklist[this.state.index].progress = progress;
     this.setState({
-      tasklist
+      tasklist,
+      todolist
     })
     setStore(TASK_KEY, tasklist)
   }
   // 移除一个
-  handleRemoveTodo(index) {
+  handleRemoveTodo(id) {
     let tasklist = this.state.tasklist;
-    tasklist[this.state.index].todolist.splice(index, 1)
+    let todolist = tasklist[this.state.index].todolist;
+    let index = todolist.findIndex(item => {return item.id === id})
+    
+    todolist.splice(index, 1)
+    tasklist[this.state.index].todolist = todolist
+    let progress = todolist.filter(item=>{return item.status}).length;
+    tasklist[this.state.index].progress = progress;
     this.setState({
-      tasklist
+      tasklist,
+      todolist
     })
     setStore(TASK_KEY, tasklist)
   }
   // 更新
-  handleUpdateTodo(index, todo) {
+  handleUpdateTodo(todo) {
+    // console.log("todo: ", todo)
     let tasklist = this.state.tasklist;
-    tasklist[this.state.index].todolist[index] = todo;
+    let todolist = tasklist[this.state.index].todolist;
+    let index = todolist.findIndex(item => {return item.id === todo.id})
+
+    todolist[index] = todo;
+    let progress = todolist.filter(item=>{return item.status}).length;
+    tasklist[this.state.index].progress = progress;
+    tasklist[this.state.index].todolist = todolist;
     this.setState({
-      tasklist
+      tasklist,
+      todolist
     })
     setStore(TASK_KEY, tasklist)
   }
@@ -124,16 +160,25 @@ class App extends Component {
       <div className="App">
         <Layout>
           <Sider className="sider" width="300px" theme="light" breakpoint="lg" collapsedWidth="0">
-            <TaskList remove={this.handleRemoveTask} id={this.state.id} tasklist={this.state.tasklist} />
-            <AddTask />
+            <TaskList 
+            remove={this.handleRemoveTask} 
+            id={this.state.id}
+            select={this.handleSelectTask}
+            tasklist={this.state.tasklist} />
+            <AddTask add={this.handleAddTask} />
           </Sider>
           <Layout>
             {title}
             <Content className="content">
-              <TodoList todolist={this.state.todolist} />
+              <TodoList 
+              index={this.state.index} 
+              todolist={this.state.todolist} 
+              add={this.handleAddTodo} 
+              remove={this.handleRemoveTodo}
+              update={this.handleUpdateTodo}/>
             </Content>
           </Layout>
-        </Layout>
+        </Layout> 
       </div>
     );
   }
