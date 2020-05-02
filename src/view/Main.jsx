@@ -2,20 +2,19 @@ import React, { Component } from 'react';
 import './App.css';
 import './assets/css/main.css';
 
-import { Layout } from 'antd';
-
-import AddTask from './Components/AddTask';
+import { Layout, Affix, Button } from 'antd';
 
 import TaskList from './Components/TaskList';
 import TodoList from './Components/TodoList';
 
 
+import { PlusSquareOutlined } from '@ant-design/icons';
 
 import { state } from './state';
 
 const { Header, Content, Sider } = Layout;
 
-class App extends Component {
+export default class Main extends Component {
   constructor(props) {
     super(props);
 
@@ -26,20 +25,12 @@ class App extends Component {
       id: '',
       todolist: [{
         title: "todo",
-        id: "40b08bd4-caa2-427c-b453-5b8cb2142f194",
         startTime: 1588380444250,
         status: true
       }, {
         title: "代办的事",
-        id: "40b08bd4-cad2-427c-b455-5b8cb2142f194",
         startTime: 1588380444250,
         status: true
-      },
-      {
-        title: "这是主题",
-        id: "40b08bd4-cad2-477c-b955-5b8cb2142f194",
-        startTime: 1588380444250,
-        progress: 0
       }],
     };
   }
@@ -64,22 +55,20 @@ class App extends Component {
       }
     }
     return (
-      <div className="App">
+      <Layout>
+        <Sider className="sider" width="300px" theme="light" breakpoint="lg" collapsedWidth="0">
+          <TaskList tasklist={this.state.tasklist} />
+          <Affix>
+            <Button type="primary" size="large" icon={<PlusSquareOutlined />} />
+          </Affix>
+        </Sider>
         <Layout>
-          <Sider className="sider" width="300px" theme="light" breakpoint="lg" collapsedWidth="0">
-            <TaskList tasklist={this.state.tasklist} />
-            <AddTask />
-          </Sider>
-          <Layout>
-            {title}
-            <Content className="content">
-              <TodoList todolist={this.state.todolist} />
-            </Content>
-          </Layout>
+          {title}
+          <Content className="content">
+            <TodoList todolist={this.state.todolist} />
+          </Content>
         </Layout>
-      </div>
+      </Layout>
     );
   }
 }
-
-export default App;

@@ -1,13 +1,25 @@
 .taskList {
-    padding: 32px 12px 12px;
+    padding: 32px 0 0;
+    display: flex;
+    flex-direction: column;
+    /* overflow: hidden; */
+    width: 100%;
+    height: 100%;
 }
 
 .taskList .search {
     margin: 12px 0;
+    padding: 0 20px;
 }
 
 .taskList {
     color: #4f5257;
+}
+
+.taskList .list {
+    padding: 12px 20px;
+    flex: 1;
+    overflow: auto;
 }
 
 .taskList .taskCard {
@@ -17,5 +29,36 @@
     width: 100%;
     background: #fff;
     margin: 10px 0;
+}
+
+.taskCard .taskContent {
+    display: flex;
+    line-height: 48px;
+}
+
+.taskCard .taskName {
+    flex: 1;
+    padding-left: 10px;
+}
+
+.taskCard .deleteBtn {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    background: #ebf1fb;
+    text-align: center;
+    line-height: 48px;
+    color: #FF6A52;
+    font-size: 18px;
+}
+
+.taskCard.on {
+    box-shadow: 4px 8px 15px #4f523333;
+    margin-left: 8px;
+
+}
+
+.taskCard:hover {
+    box-shadow: 4px 8px 15px #4f523333;
 }
 

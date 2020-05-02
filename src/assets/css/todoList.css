@@ -1,13 +1,39 @@
 .todo {
     margin: 10px -20px;
-    padding: 30px 10px 0;
-    border-radius: 8px;
+    padding: 30px 16px 0;
     background: #f0f4ff;
     height: 100%;
 }
 
 .todo .list {
-    padding: 10px;
     border-radius: 12px;
+}
+
+.todo .list > div {
+
+    padding: 10px;
+}
+
+.todo .list .todoItem {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    margin: 10px 0;
+    border-radius: 8px;
     background: #fff;
+}
+
+.todoItem .todoCheck {
+    flex: 1;
+    line-height: 28px;
+}
+
+.deleteBtn {
+    width: 28px;
+    height: 28px;
+    text-align: center;
+    line-height: 28px;
+    border-radius: 4px;
+    background: #ebf1fb;
+    color: #FF6A52;
 }

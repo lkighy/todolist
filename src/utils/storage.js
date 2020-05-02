@@ -8,5 +8,5 @@ export const setStore = (key, content) => {
 
 export const getStore = key => {
     if (!key) return
-    return window.localStorage.getItem(name)
+    return window.localStorage.getItem(key)
 }

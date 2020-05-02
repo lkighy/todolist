@@ -8,8 +8,9 @@ html, body {
 
 .sider{
     background: #eef3fc;
-    width: 300px;
+    width: 320px;
     height: 100vh;
+    position: relative;
 }
 
 .header, .content {
