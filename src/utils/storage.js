@@ -10,3 +10,5 @@ export const getStore = key => {
     if (!key) return
     return window.localStorage.getItem(key)
 }
+
+export const TASK_KEY = 'tasklist';

@@ -13,11 +13,29 @@ let DBparamet = {
     dbName: "",
     version: "",
     // storeNames // 暂时不指定这个参数 , 暂且使用 dbName 代替该参数
-    keyPath: {}, // 这个对象里只能是 keyPath 和 autoIncrement
-    indexList: [], // 索引列表
+    keyPath: {
+        keyPath: '', // 键路径
+        autoIncrement: true // 自动增长
+    }, // 键路径， {keyPath:  }
+    indexList: [{ // 索引列表
+        indexName: '', // 缩影名称
+        keyPath: '', // 键路径
+        objectParameters: { // 可选参数
+            unique: true, // 是否唯一
+            // 多个条目， 为 ture 时，将在为每个数组元素添加一个条目。
+            // 为false 则将数组视为单个条目
+            multiEntry: true, 
+            // 仅仅适用 Firefox(43+)为您的索引制定语言环境
+            // 通过键范围对数据执行任何排序操作都将服从改语言环境的排序规则
+            // string类型: 例如 'en-US'
+            // auto: 使用平台默认语言环境
+            // null 或 undefined: 未指定语言环境，则使用常规的 JavaScript排序，不支持语言环境
+            locale: ''
+        },
+    }],
 }
 
-function hanleError(request){
+function hanleError(request) {
     request.onerror = e => {
         throw e.target.errorCode
     }
@@ -80,7 +98,7 @@ class DB {
         let request = this.db.transaction([this.dbName], "readwrite").transaction.objectStore(this.dbName).put(data);
         return hanleError(request)
     }
-
+    // 
     select(query) {
         let request = this.db.transaction([this.dbName], "readwrite").transaction.objectStore(this.dbName).get(query);
         return hanleError(request)
@@ -96,7 +114,7 @@ class DB {
             return hanleError(request)
         }
     }
-
+    
     indexSelect(name, query) {
         let request = this.db.transaction([this.dbName], "readwrite").transaction.objectStore(this.dbName).index(name).get(query)
         return hanleError(request)

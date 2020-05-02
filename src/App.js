@@ -5,9 +5,10 @@ import './assets/css/main.css';
 import { Layout } from 'antd';
 
 import AddTask from './Components/AddTask';
-
 import TaskList from './Components/TaskList';
 import TodoList from './Components/TodoList';
+
+import { TASK_KEY, setStore } from './utils/storage';
 
 
 
@@ -24,30 +25,86 @@ class App extends Component {
       title: '',
       time: '',
       id: '',
-      todolist: [{
-        title: "todo",
-        id: "40b08bd4-caa2-427c-b453-5b8cb2142f194",
-        startTime: 1588380444250,
-        status: true
-      }, {
-        title: "代办的事",
-        id: "40b08bd4-cad2-427c-b455-5b8cb2142f194",
-        startTime: 1588380444250,
-        status: true
-      },
-      {
-        title: "这是主题",
-        id: "40b08bd4-cad2-477c-b955-5b8cb2142f194",
-        startTime: 1588380444250,
-        progress: 0
-      }],
+      index: -1,
+      todolist: [],
     };
+
+    this.handleAddTask = this.handleAddTask.bind(this)
+    this.handleRemoveTask = this.handleRemoveTask.bind(this)
+    this.handleUpdateTask = this.handleUpdateTask.bind(this)
+    this.handleSelectTask = this.handleSelectTask.bind(this)
+    this.handleAddTodo = this.handleAddTodo.bind(this)
+    this.handleRemoveTodo = this.handleRemoveTodo.bind(this)
+    this.handleUpdateTodo = this.handleUpdateTodo.bind(this)
   }
 
-  // 实现增删改查
-  handSetTasklist(type, task) {
-
+  // 增
+  handleAddTask(task) {
+    let tasklist = [...this.state.tasklist, task];
+    this.setState({
+      tasklist,
+    })
+    setStore(TASK_KEY, tasklist)
   }
+  // 删
+  handleRemoveTask(index) { // 如果要保证删除的是正确序号的任务列表，则可再传入一个ID来进行判定
+    let tasklist = this.state.tasklist;
+    tasklist.splice(index, 1)
+    this.setState({
+      tasklist
+    })
+    setStore(TASK_KEY, tasklist)
+  }
+  // 改
+  handleUpdateTask(index, task) {
+    let tasklist = this.state.tasklist;
+    tasklist[index] = task
+    this.setState({
+      tasklist
+    })
+    setStore(TASK_KEY, tasklist)
+  }
+  // 点击
+  handleSelectTask(index) {
+    let task = this.state.tasklist[index]
+    this.setState({
+      title: task.title,
+      time: task.time,
+      id: task.id,
+      index: index,
+      todolist: task.todolist,
+    })
+  }
+  // 待办清单增删改查
+  handleAddTodo(newTodolist) { // 添加
+    let tasklist = this.state.tasklist;
+    tasklist[this.state.index].todolist = newTodolist;
+    this.setState({
+      tasklist
+    })
+    setStore(TASK_KEY, tasklist)
+  }
+  // 移除一个
+  handleRemoveTodo(index) {
+    let tasklist = this.state.tasklist;
+    tasklist[this.state.index].todolist.splice(index, 1)
+    this.setState({
+      tasklist
+    })
+    setStore(TASK_KEY, tasklist)
+  }
+  // 更新
+  handleUpdateTodo(index, todo) {
+    let tasklist = this.state.tasklist;
+    tasklist[this.state.index].todolist[index] = todo;
+    this.setState({
+      tasklist
+    })
+    setStore(TASK_KEY, tasklist)
+  }
+  // handleSelectTodo(index) {
+
+  // }
 
   render() {
     let title;
@@ -67,7 +124,7 @@ class App extends Component {
       <div className="App">
         <Layout>
           <Sider className="sider" width="300px" theme="light" breakpoint="lg" collapsedWidth="0">
-            <TaskList tasklist={this.state.tasklist} />
+            <TaskList remove={this.handleRemoveTask} id={this.state.id} tasklist={this.state.tasklist} />
             <AddTask />
           </Sider>
           <Layout>

@@ -16,7 +16,7 @@ export default class TodoList extends React.Component {
         )
         let empty;
         if (this.props.todolist.length == 0) {
-            empty = <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="还没有代办清单喔" />
+            empty = <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="还没有代办清单喔，点击添加一个吧" />
         }
         return (
             <div className="todo">

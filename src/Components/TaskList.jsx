@@ -2,7 +2,7 @@
 import React from 'react';
 import '../assets/css/taskList.css';
 
-import { Input, Progress, Popconfirm } from 'antd';
+import { Input, Progress, Popconfirm, Empty } from 'antd';
 
 import { DeleteOutlined, RightOutlined } from '@ant-design/icons';
 
@@ -21,10 +21,18 @@ export default class TaskList extends React.Component {
         })
     }
 
+    // this.props.add()
+    // this.props.update()
+    // this.props.select()
+
     render() {
-        const tasklist = this.props.tasklist.map(item =>
-            <TaskCard task={item} key={item.id} />
+        const tasklist = this.props.tasklist.map((item, index)=>
+            <TaskCard onClick={this.props.select(index)} remove={this.props.remove} id={this.props.id} task={item} key={item.id} />
         )
+        let empty;
+        if (this.props.tasklist.length == 0) {
+            empty = <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="当前还没有任务，赶紧添加一个吧" />
+        }
         return (
             <div className="taskList">
                 <div className="search">
@@ -32,27 +40,7 @@ export default class TaskList extends React.Component {
                 </div>
                 <div className="list">
                     {tasklist}
-                    <div className="taskCard on">
-                        {/* 删除图标，还有什么呢 */}
-                        <div className="taskContent">
-                            <div className="deleteBtn">
-                                <Popconfirm
-                                    title="确定要删除这个任务？"
-                                    okText="是"
-                                    cancelText="否"
-                                >
-                                    <DeleteOutlined />
-                                </Popconfirm>
-                            </div>
-                            <div className="taskName">
-                                任务名称
-                            </div>
-                            <div>
-                                <RightOutlined />
-                            </div>
-                        </div>
-                        <Progress></Progress>
-                    </div>
+                    {empty}
                 </div>
             </div>
         )
@@ -62,13 +50,13 @@ export default class TaskList extends React.Component {
 function TaskCard(props) {
     return (
         <div className="taskCard">
-            {/* 删除图标，还有什么呢 */}
-            <div className="taskContent">
+            <div className={"taskContent " + (props.task.id == props.id ? 'on' : '')}>
                 <div className="deleteBtn">
                     <Popconfirm
                         title="确定要删除这个任务？"
                         okText="是"
                         cancelText="否"
+                        onConfirm={props.remove(this.props.index)}
                     >
                         <DeleteOutlined />
                     </Popconfirm>
