@@ -1,14 +1,12 @@
 import React from 'react';
 
-import { Button, Form, Input, Popconfirm } from 'antd';
+import { Button, Form, Input, Popconfirm, message } from 'antd';
 
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 
 import '../assets/css/addTask.css';
 
 import { uuid } from '../utils/uuid';
-import FormItemLabel from 'antd/lib/form/FormItemLabel';
-import TodoList from './TodoList';
 
 export default class AddTask extends React.Component {
     constructor(props) {
@@ -17,6 +15,7 @@ export default class AddTask extends React.Component {
         this.state = {
             title: '',
             todolist: [],
+            visible: false,
         }
 
         this.handleInputTask = this.handleInputTask.bind(this)
@@ -60,8 +59,18 @@ export default class AddTask extends React.Component {
             todolist
         })
     }
+    
 
     handleAddTask(e) {
+        // 校验为空
+        if (this.state.title === '') {
+            message.warning('任务名称不能为空！')
+            return
+        }
+        if (this.state.todolist.find(item=> {return item.title === ''}) === -1) {
+            message.warning('添加的待办清单不能为空！')
+            return
+        } 
         this.props.add({
             ...this.state,
             startTime: new Date().getTime(),
@@ -71,6 +80,7 @@ export default class AddTask extends React.Component {
         this.setState({
             title: '',
             todolist: [],
+            visible: false,
         })
     }
 
@@ -86,11 +96,13 @@ export default class AddTask extends React.Component {
                         todoRemove={this.handleTodoRemove}
                         inputTodo={this.handleInputTodo}
                     />}
+                    visible={this.state.visible}
                     okText="确定"
                     cancelText="取消"
+                    onCancel={() => {this.setState({visible: false})}}
                     onConfirm={this.handleAddTask}
                     icon={null}>
-                    <Button className="btn" type="primary" size="large" icon={<PlusOutlined />} />
+                    <Button className="btn" onClick={()=>this.setState({visible: !this.state.visible})} type="primary" size="large" icon={<PlusOutlined />} />
                 </Popconfirm>,
             </div>
         )
@@ -100,13 +112,13 @@ export default class AddTask extends React.Component {
 function AddForm(props) {
     return (
         <Form labelCol={{ span: 8 }} labelAlign="right" name="addTask" style={{ width: '320px' }}>
-            <Form.Item label="任务名称">
+            <Form.Item label="任务名称" required rules={[{ required: true, message: '任务名称不能为空!' }]}>
                 <Input style={{ width: '180px' }} value={props.title} onInput={props.inputTask}></Input>
             </Form.Item>
 
             {props.todolist.map((todo, index) =>
 
-                <Form.Item key={todo.id} label={'代办清单' + index}>
+                <Form.Item key={todo.id} label={'代办清单' + index} required rules={[{ required: true, message: '任务名称不能为空!' }]}>
                     <Input style={{ width: '180px' }} value={todo.title} data-index={index} onInput={props.inputTodo}></Input>
                     <span className="removeBtn" data-index={index} onClick={props.todoRemove}>
                         <MinusCircleOutlined />

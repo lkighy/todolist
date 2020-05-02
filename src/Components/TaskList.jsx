@@ -67,9 +67,10 @@ class TaskCard extends React.Component {
     }
 
     render() {
+        let className = this.props.task.id === this.props.id? 'taskCard on' : 'taskCard'
         return (
-            <div className="taskCard">
-                <div className={"taskContent " + (this.props.task.id == this.props.id ? 'on' : '')}>
+            <div className={className}>
+                <div className="taskContent">
                     <Popconfirm
                         title="确定要删除这个任务？"
                         okText="是"

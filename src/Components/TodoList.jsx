@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { Checkbox, Empty, Popconfirm, Button, Input } from 'antd';
+import { Checkbox, Empty, Popconfirm, Button, Input, message } from 'antd';
 import '../assets/css/todoList.css';
 
-import { DeleteOutlined, PlusOutlined, CheckOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { uuid } from '../utils/uuid';
 
 export default class TodoList extends React.Component {
@@ -36,6 +36,10 @@ export default class TodoList extends React.Component {
     }
 
     handleAddTodo() {
+        if (this.state.todoInputValue === '') {
+            message.warning("待办清单名称不能为空！")
+            return
+        }
         this.props.add({
             title: this.state.todoInputValue,
             startTime: new Date().getTime(),
@@ -64,7 +68,7 @@ export default class TodoList extends React.Component {
                 <Button
                     type="dashed"
                     style={{ width: '100%', borderRadius: '8px' }}
-                    onClick={() => this.setState({showInput: true})}
+                    onClick={() => this.setState({ showInput: true })}
                 >
                     <PlusOutlined /> 添加代办清单
                 </Button>)
@@ -74,6 +78,7 @@ export default class TodoList extends React.Component {
             todoInput = <TodoAddItem
                 value={this.state.todoInputValue}
                 add={this.handleAddTodo}
+                close={() => { this.setState({ showInput: false }) }}
                 onInput={this.handleItemInput}
             />
         }
@@ -94,47 +99,36 @@ export default class TodoList extends React.Component {
     }
 }
 
-class TodoItem extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.handleRemoveTodo = this.handleRemoveTodo.bind(this)
-    }
-
-    handleRemoveTodo(e) {
-        console.log("e: ", e)
-    }
-
-    render() {
-        return (
-            <div className="todoItem">
-                <Checkbox 
-                checked={this.props.todo.status} 
-                data-index={this.props.index} 
-                onChange={this.props.update} 
-                className={'todoCheck ' + (this.props.todo.status ? 'done' : '')}>
-                    {this.props.todo.title}
-                </Checkbox>
-                <div className="deleteBtn">
-                    <Popconfirm
-                        title="确定要删除这个代办项？"
-                        okText="是"
-                        cancelText="否"
-                        data-index={this.props.index}
-                        onConfirm={this.props.remove}
-                    >
-                        <DeleteOutlined />
-                    </Popconfirm>
-                </div>
+function TodoItem(props) {
+    return (
+        <div className="todoItem">
+            <Checkbox
+                checked={props.todo.status}
+                data-index={props.index}
+                onChange={props.update}
+                className={'todoCheck ' + (props.todo.status ? 'done' : '')}>
+                {props.todo.title}
+            </Checkbox>
+            <div className="deleteBtn">
+                <Popconfirm
+                    title="确定要删除这个代办项？"
+                    okText="是"
+                    cancelText="否"
+                    data-index={props.index}
+                    onConfirm={props.remove}
+                >
+                    <DeleteOutlined />
+                </Popconfirm>
             </div>
-        )
-    }
+        </div>
+    )
 }
 
 function TodoAddItem(props) {
     return (
         <div className="todoItem TodoAddItem">
             <Input value={props.value} placeholder="请输入代办清单" onInput={props.onInput}></Input>
+            <div className="addBtn" onClick={props.close}><CloseOutlined /></div>
             <div className="addBtn" onClick={props.add}><CheckOutlined /></div>
         </div>
     )
